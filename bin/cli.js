@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const Asset = require('../asset');
 const Processor = require('../processor');
 const jsProcessor = require('../processor/js.js');
