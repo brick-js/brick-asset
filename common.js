@@ -18,6 +18,7 @@
             CommonJS.pending[module.id] = true;
 
             var define = CommonJS.defines[module.id];
+            module.elements = document.querySelectorAll('.brk-' + module.id);
             define(module.require.bind(module), module.exports, module);
             module.loaded = true;
 
@@ -45,7 +46,6 @@
         mod.id = id;
         mod.children = [];
         mod.exports = {};
-        mod.elements = document.querySelectorAll('.brk-' + id);
         return CommonJS.moduleCache[id] = mod;
     }
 
