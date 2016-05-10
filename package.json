@@ -1,6 +1,6 @@
 {
   "name": "brick-asset",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Site CSS/JS generator for Brick.JS ",
   "main": "index.js",
   "bin": {

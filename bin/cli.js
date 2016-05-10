@@ -53,8 +53,8 @@ if (target === 'css') {
     var cssFile = path.resolve(file, 'site.css');
     var jsFile = path.resolve(file, 'site.js');
 
-    promise.then(js).then(src => output(cssFile, src));
-    promise.then(css).then(src => output(jsFile, src));
+    promise.then(js).then(src => output(jsFile, src));
+    promise.then(css).then(src => output(cssFile, src));
 }
 
 function output(file, src) {
