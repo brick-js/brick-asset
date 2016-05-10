@@ -4,6 +4,7 @@ const Asset = require('../asset');
 const Processor = require('../processor');
 const jsProcessor = require('../processor/js.js');
 const cssProcessor = require('../processor/css.js');
+const less = require('brick-less');
 const program = require('commander');
 const pkg = require('../package.json');
 const process = require('process');
@@ -66,6 +67,7 @@ function src(root) {
     Processor.clear();
     Processor.register('.js', jsProcessor, root);
     Processor.register('.css', cssProcessor, root);
+    Processor.register('.less', less(), root);
 
     return asset.src(root);
 }
