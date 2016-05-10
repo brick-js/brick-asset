@@ -2,9 +2,6 @@ var path = require('path');
 var debug = require('debug')('brick-asset:fs');
 var BPromise = require("bluebird");
 var fs = BPromise.promisifyAll(require("fs"));
-var fs = require('fs');
-var path = require('path');
-var FindFiles = require("node-find-files");
 
 function subdirs(dir) {
     return fs
