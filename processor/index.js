@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const changeCase = require('change-case');
 const debug = require('debug')('brick:module:processor');
 const assert = require('assert');
 
