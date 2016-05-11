@@ -1,6 +1,6 @@
 {
   "name": "brick-asset",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Site CSS/JS generator for Brick.JS ",
   "main": "index.js",
   "bin": {
@@ -35,6 +35,7 @@
     "brick-less": "^1.1.5",
     "commander": "^2.9.0",
     "debug": "^2.2.0",
-    "less": "^2.7.1"
+    "less": "^2.7.1",
+    "lodash": "^4.12.0"
   }
 }
