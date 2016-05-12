@@ -67,7 +67,7 @@ function src(root) {
     Processor.clear();
     Processor.register('.js', jsProcessor, root);
     Processor.register('.css', cssProcessor, root);
-    Processor.register('.less', less(), root);
+    Processor.register('.less', less({root: root}), root);
 
     return asset.src(root);
 }
