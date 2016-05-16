@@ -18,7 +18,9 @@
             CommonJS.pending[module.id] = true;
 
             var define = CommonJS.defines[module.id];
-            module.elements = document.querySelectorAll('.brk-' + module.id);
+            if(module.id.indexOf('/') === -1){
+                module.elements = document.querySelectorAll('.brk-' + module.id);
+            }
             define(module.require.bind(module), module.exports, module);
             module.loaded = true;
 
