@@ -94,6 +94,7 @@ Here's a [Gulp][gulp] file generating `public/site.css` and `public/site.js`:
 
 ```javascript
 var asset = require('brick-asset');
+var file = require('gulp-file');
 
 gulp.task('js', function() {
     return asset.src('./bricks')
