@@ -96,18 +96,20 @@ Here's a [Gulp][gulp] file generating `public/site.css` and `public/site.js`:
 var asset = require('brick-asset');
 var file = require('gulp-file');
 
-gulp.task('js', function() {
-    return asset.src('./bricks')
+gulp.task('js', function(cb) {
+    asset.src('./bricks')
         .then(x => asset.js())
         .then(css => file('site.js', css, {src: true})
-            .pipe(gulp.dest('public')));
+            .pipe(gulp.dest('public'))
+            .on('finish', cb));
 });
 
-gulp.task('css', function() {
-    return asset.src('./bricks')
+gulp.task('css', function(cb) {
+    asset.src('./bricks')
         .then(x => asset.css())
         .then(css => file('site.css', css, {src: true})
-            .pipe(gulp.dest('public')));
+            .pipe(gulp.dest('public'))
+            .on('finish', cb));
 });
 ```
 
