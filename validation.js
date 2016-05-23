@@ -1,97 +1,64 @@
 const debug = require('debug')('brick-asset:validation');
 
 function validateCSS(file) {
-    file = file.substr(file.indexOf('/') + 1);
-    return /^style((\.(css|less))|(\/.+\.(css|less)))$/.test(file);
-}
-
-function normalizeCSS(slug) {
-    var origin = slug;
-    //Examples slugs:
-    //  simple/style.css
-    //  simple/style/index.css
-    //  simple/style/foo.css
-    //  simple/style/foo/index.css
-    //  simple/style/foo/bar.css
-
-    var name = slug.toLowerCase().slice(0, slug.indexOf('/'));  // simple
-    slug = slug.slice(slug.indexOf('/') + 1, slug.lastIndexOf('.'));
-    //  style
-    //  style/index
-    //  style/foo
-    //  style/foo/index
-    //  style/foo/bar
-
-    slug = slug.replace(/^style(\/|$)/, '');
-    // 
-    //  index
-    //  foo
-    //  foo/index
-    //  foo/bar
-
-    slug = slug.replace(/(^|\/)index$/, '');
-    //  
-    // 
-    //  foo
-    //  foo
-    //  foo/bar
-
-    var id = slug ? name + '/' + slug : name;
-    //  simple
-    //  simple
-    //  simple/foo
-    //  simple/foo
-    //  simple/foo/bar
-
-    debug(`normalizing css: ${origin} => ${id}`);
-    return id;
+    var s = isUnix(file) ? '\\/' : '\\\\';
+    var pattern = `^([^/\\\\]+)${s}style((\.(css|less))|(${s}.+\.(css|less)))$`;
+    return RegExp(pattern).test(file);
 }
 
 function validateJS(file) {
-    file = file.substr(file.indexOf('/') + 1);
-    return /^client((\.js)|(\/.+\.js))$/.test(file);
+    var s = isUnix(file) ? '\\/' : '\\\\';
+    var pattern = `^([^/\\\\]+)${s}client((\.(js))|(${s}.+\.(js)))$`;
+    return RegExp(pattern).test(file);
 }
 
-function normalizeJS(slug) {
-    var origin = slug;
-    //Examples slugs:
-    //  simple/client.js
-    //  simple/client/index.js
-    //  simple/client/foo.js
-    //  simple/client/foo/index.js
-    //  simple/client/foo/bar.js
-    
-    var name = slug.toLowerCase().slice(0, slug.indexOf('/'));  // simple
-    slug = slug.slice(slug.indexOf('/') + 1, -3);
-    //  client
-    //  client/index
-    //  client/foo
-    //  client/foo/index
-    //  client/foo/bar
+function normalizeCSS(file) {
+    var pattern, m, id;
+    var s = isUnix(file) ? '\\/' : '\\\\';
 
-    slug = slug.replace(/^client(\/|$)/, '');
-    // 
-    //  index
-    //  foo
-    //  foo/index
-    //  foo/bar
+    if ((m = file.match(
+            RegExp(`^([^/\\\\]+)${s}style\.(css|less)`))) ||
+        (m = file.match(
+            RegExp(`^([^/\\\\]+)${s}style${s}index\.(css|less)`)))) {
+        id = `${m[1]}`;
+    } else if ((m = file.match(
+            RegExp(`^([^/\\\\]+)${s}style${s}(.+)${s}index\.(css|less)`))) ||
+        (m = file.match(
+            RegExp(`^([^/\\\\]+)${s}style${s}(.+)\.(css|less)`)))) {
+        id = m[1] + '/' + m[2].replace(RegExp(s, 'g'), '/');
+    } else {
+        throw (new Error(`filename ${file} not valid`));
+    }
 
-    slug = slug.replace(/(^|\/)index$/, '');
-    //  
-    // 
-    //  foo
-    //  foo
-    //  foo/bar
-
-    var id = slug ? name + '/' + slug : name;
-    //  simple
-    //  simple
-    //  simple/foo
-    //  simple/foo
-    //  simple/foo/bar
-
-    debug(`normalizing js: ${origin} => ${id}`);
+    debug(`normalizing css: ${file} => ${id}`);
     return id;
+}
+
+function normalizeJS(file) {
+    var pattern, m, id;
+    var s = isUnix(file) ? '\\/' : '\\\\';
+
+    if ((m = file.match(
+            RegExp(`^([^/\\\\]+)${s}client\.(js)`))) ||
+        (m = file.match(
+            RegExp(`^([^/\\\\]+)${s}client${s}index\.(js)`)))) {
+
+        id = `${m[1]}`;
+    } else if ((m = file.match(
+            RegExp(`^([^/\\\\]+)${s}client${s}(.+)${s}index\.(js)`))) ||
+        (m = file.match(
+            RegExp(`^([^/\\\\]+)${s}client${s}(.+)\.(js)`)))) {
+        id = m[1] + '/' + m[2].replace(RegExp(s, 'g'), '/');
+    } else {
+        throw (new Error(`filename ${file} not valid`));
+    }
+
+    debug(`normalizing js: ${file} => ${id}`);
+    return id;
+}
+
+function isUnix(filepath) {
+    return filepath.indexOf('/') > -1;
 }
 
 exports.validateCSS = validateCSS;
