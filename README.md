@@ -12,7 +12,7 @@ For information about CSS Processors called by `brick-asset`, see:
 * [brick-js/brick-less][brick-less]: LESS pre-processor for brick.js.
 * brick-sass? All kind of contributions are wellcomed.
 
-## Command Line Tool
+## Command Line Interface
 
 ### Install
 
@@ -56,7 +56,7 @@ For more details, see:
 brick-asset --help
 ```
 
-## Use as Dependency
+## Programmatically
 
 ### Usage
 
@@ -90,19 +90,28 @@ Returns a promise which will be resolved as a String of CSS source.
 
 ## Gulp Task
 
-```javascript
-var fs = require('bluebird').promisifyAll(require("fs"));
-var asset = require('brick-asset');
+Here's a [Gulp][gulp] file generating `public/site.css` and `public/site.js`:
 
-gulp.task('asset', function() {
-    return asset.src('./bricks').then(function(){
-        return BPromise.all([
-            asset.css().then(src => fs.writeFileAsync('./public/site.css', src)),
-            asset.js().then(src => fs.writeFileAsync('./public/site.js', src))
-        ]);
-    });
+```javascript
+var asset = require('brick-asset');
+var file = require('gulp-file');
+
+gulp.task('js', function(cb) {
+    asset.src('./bricks')
+        .then(x => asset.js())
+        .then(css => file('site.js', css, {src: true})
+            .pipe(gulp.dest('public'))
+            .on('finish', cb));
+});
+
+gulp.task('css', function(cb) {
+    asset.src('./bricks')
+        .then(x => asset.css())
+        .then(css => file('site.css', css, {src: true})
+            .pipe(gulp.dest('public'))
+            .on('finish', cb));
 });
 ```
 
 [brick-less]: https://github.com/brick-js/brick-less
-
+[gulp]: http://gulpjs.com/
