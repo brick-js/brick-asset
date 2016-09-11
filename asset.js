@@ -15,27 +15,21 @@ var asset = {
             .map(dirname => this.parse(dirname));
     },
     parse: function(dirname) {
+        //console.log('[asset.parse()]', dirname);
         var dirpath = path.resolve(this.root, dirname);
-        var folderpath = path.resolve(dirpath, 'client');
         var paths = [dirpath],
             css = [],
             js = [];
-        //console.log('[xx]', dirname);
-        return fs
-            .dirExist(folderpath)
-            .then(stat => paths.push(folderpath))
-            .catch(e => e)
-            .then(x => fs.eachDeep(paths, p => {
-                //console.log('[asset.parse()]', p);
-                debug(p);
+        //console.log('[asset.parse()] paths', paths);
+        return fs.eachDeep(paths, p => {
                 if (/.+\.(css|less)$/.test(p) && (p = this.parseCSS(p))) {
                     //console.log('[asset.parse()] pushing css', p);
                     css.push(p);
                 } else if (/.+\.(js)$/.test(p) && (p = this.parseJS(p))) {
-                    //console.log('pushing js');
+                    //console.log('pushing js', p);
                     js.push(p);
                 }
-            }))
+            })
             .then(x => {
                 this.cache[dirname] = {
                     css, js
@@ -92,8 +86,10 @@ var asset = {
                     _.set(mod, 'src', src));
             })
             // isolate
-            .map(mod => `window.brick.register("${mod.id}", ` +
-                `function(require, exports, module){\n${mod.src}});`)
+            .map(mod => mod.id ? 
+                 `window.brick.register("${mod.id}", ` +
+                `function(require, exports, module){\n${mod.src}});` :
+                mod.src)
             .then(files => [loader].concat(files))
             .then(combine);
     }

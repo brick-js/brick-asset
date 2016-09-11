@@ -4,6 +4,7 @@ const loader = fs.readSync(Path.resolve(__dirname, '../common.js'));
 const asset = require('..');
 const chai = require("chai");
 const should = chai.should();
+const expect = chai.expect;
 
 describe('js', function() {
     var js;
@@ -45,6 +46,16 @@ describe('js', function() {
         var foo = 'window.brick.register("folder/bar/foo",' +
             'function(require,exports,module){foo});';
         return js.should.contain(foo);
+    });
+
+    it('should handle global js: client/index', function() {
+        expect(js).to.match(/(^|[^{])entry-point-1/);
+    });
+
+    it('should handle direct module: client/foo', function() {
+        var foo = 'window.brick.register("foo",' +
+            'function(require,exports,module){this-is-foo});';
+        return expect(js).to.contain(foo);
     });
 });
 

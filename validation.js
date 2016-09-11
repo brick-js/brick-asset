@@ -38,14 +38,17 @@ function normalizeCSS(file) {
  * home/client/foo.js       => 'home/foo'
  * home/client/foo/index.js => 'home/foo'
  * client/index.js          => ''
+ * client/foo.js            => 'foo'
  * client.js                => ''
  */
 function normalizeJS(file) {
     var id = file
-        .replace(/\\/g, '/')        // normalize windowx
-        .replace(/.js$/, '')        // remove suffix
-        .replace('/index', '')     // remove /index
-        .replace(/(\/|^)client/, '');    // remove style prefix
+        .replace(/\\/g, '/')            // normalize windowx
+        .replace(/.js$/, '')            // remove suffix
+        .replace('/index', '')          // remove /index
+        .replace(/\/client\//, '/')     // remove style prefix
+        .replace(/\/client$/, '')       // remove style prefix
+        .replace(/^client(\/)?/, '');   // remove style prefix
     return id;
 }
 
