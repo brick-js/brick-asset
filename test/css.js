@@ -15,7 +15,8 @@ describe('css', function() {
                     .replace(/:\s*/g, ':')
                     .replace(/\s*{\s*/g, '{');
                 done();
-            });
+            })
+            .catch(done);
     });
 
     it('should handle style.css', function() {
@@ -28,18 +29,9 @@ describe('css', function() {
         return css.should.contain(result);
     });
 
-    it('should handle other CSS in style/', function() {
-        var result = '.brk-folder .foo{color:red;}';
+    it('should handle global style/', function() {
+        var result = '.foo{color:#323;}footer{color:#222;}';
         return css.should.contain(result);
     });
 
-    it('should handle index.css of style/bar/', function() {
-        var result = '.brk-folder .bar{color:red;}';
-        return css.should.contain(result);
-    });
-
-    it('should handle other CSS in style/bar/', function() {
-        var result = '.brk-folder .bar .foo{color:red;}';
-        return css.should.contain(result);
-    });
 });

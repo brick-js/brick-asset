@@ -1,59 +1,51 @@
 const debug = require('debug')('brick-asset:validation');
 
 function validateCSS(file) {
+    //console.log('[validateCSS]', file);
     var s = isUnix(file) ? '\\/' : '\\\\';
-    var pattern = `^([^/\\\\]+)${s}style((\.(css|less))|(${s}.+\.(css|less)))$`;
+    var pattern = `(^|${s})style(${s}index)?\.(css|less)$`;
     return RegExp(pattern).test(file);
 }
 
 function validateJS(file) {
     var s = isUnix(file) ? '\\/' : '\\\\';
-    var pattern = `^([^/\\\\]+)${s}client((\.(js))|(${s}.+\.(js)))$`;
+    var pattern = `(^|${s})client((\.(js))|(${s}.+\.(js)))$`;
     return RegExp(pattern).test(file);
 }
 
+/*
+ * @param {String} file CSS file path
+ * @return {String} '/' separated id:
+ * For example:
+ * home/style.less       => 'home'
+ * home/style/index.less => 'home'
+ * style/index.less      => ''
+ * style.less            => ''
+ */
 function normalizeCSS(file) {
-    var pattern, m, id;
-    var s = isUnix(file) ? '\\/' : '\\\\';
-
-    if ((m = file.match(
-            RegExp(`^([^/\\\\]+)${s}style\.(css|less)`))) ||
-        (m = file.match(
-            RegExp(`^([^/\\\\]+)${s}style${s}index\.(css|less)`)))) {
-        id = `${m[1]}`;
-    } else if ((m = file.match(
-            RegExp(`^([^/\\\\]+)${s}style${s}(.+)${s}index\.(css|less)`))) ||
-        (m = file.match(
-            RegExp(`^([^/\\\\]+)${s}style${s}(.+)\.(css|less)`)))) {
-        id = m[1] + '/' + m[2].replace(RegExp(s, 'g'), '/');
-    } else {
-        throw (new Error(`filename ${file} not valid`));
-    }
-
-    debug(`normalizing css: ${file} => ${id}`);
+    var id = file
+        .replace(/\\/g, '/')        // normalize windowx
+        .replace(/(\/)?style(\/index)?\.(less|css)$/, '');// remove suffix
     return id;
 }
 
+/*
+ * @param {String} file JS file path
+ * @return {String} '/' separated id:
+ * For example:
+ * home/client.js           => 'home'
+ * home/client/index.js     => 'home'
+ * home/client/foo.js       => 'home/foo'
+ * home/client/foo/index.js => 'home/foo'
+ * client/index.js          => ''
+ * client.js                => ''
+ */
 function normalizeJS(file) {
-    var pattern, m, id;
-    var s = isUnix(file) ? '\\/' : '\\\\';
-
-    if ((m = file.match(
-            RegExp(`^([^/\\\\]+)${s}client\.(js)`))) ||
-        (m = file.match(
-            RegExp(`^([^/\\\\]+)${s}client${s}index\.(js)`)))) {
-
-        id = `${m[1]}`;
-    } else if ((m = file.match(
-            RegExp(`^([^/\\\\]+)${s}client${s}(.+)${s}index\.(js)`))) ||
-        (m = file.match(
-            RegExp(`^([^/\\\\]+)${s}client${s}(.+)\.(js)`)))) {
-        id = m[1] + '/' + m[2].replace(RegExp(s, 'g'), '/');
-    } else {
-        throw (new Error(`filename ${file} not valid`));
-    }
-
-    debug(`normalizing js: ${file} => ${id}`);
+    var id = file
+        .replace(/\\/g, '/')        // normalize windowx
+        .replace(/.js$/, '')        // remove suffix
+        .replace('/index', '')     // remove /index
+        .replace(/(\/|^)client/, '');    // remove style prefix
     return id;
 }
 

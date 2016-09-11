@@ -20,15 +20,19 @@ var asset = {
         var paths = [dirpath],
             css = [],
             js = [];
+        //console.log('[xx]', dirname);
         return fs
             .dirExist(folderpath)
             .then(stat => paths.push(folderpath))
             .catch(e => e)
             .then(x => fs.eachDeep(paths, p => {
+                //console.log('[asset.parse()]', p);
                 debug(p);
-                if (/.+\.(css|less)/.test(p) && (p = this.parseCSS(p))) {
+                if (/.+\.(css|less)$/.test(p) && (p = this.parseCSS(p))) {
+                    //console.log('[asset.parse()] pushing css', p);
                     css.push(p);
-                } else if (/.+\.(js)/.test(p) && (p = this.parseJS(p))) {
+                } else if (/.+\.(js)$/.test(p) && (p = this.parseJS(p))) {
+                    //console.log('pushing js');
                     js.push(p);
                 }
             }))
@@ -40,6 +44,7 @@ var asset = {
     },
     parseCSS: function(file) {
         var slug = file.substr(this.root.length + 1);
+        //console.log('[parseCSS]', file, slug);
         return validation.validateCSS(slug) && {
             id: validation.normalizeCSS(slug),
             ext: path.extname(slug),
@@ -58,12 +63,17 @@ var asset = {
         var fileArrays = _.values(this.cache).map(obj => obj.css);
         var files = _.union.apply(_, fileArrays);
 
+        //console.log('[asset.css()]', this.cache);
+        //console.log('[asset.css()]', fileArrays);
+        //console.log('[asset.css()]', files);
+
         return BPromise.resolve(files)
             .map(mod => {
                 var p = Processor.get(mod.ext);
                 assert(p, `processor for ${mod.ext} not found`);
 
-                var prefix = '.brk-' + mod.id.split('/').join(' .');
+                var prefix = mod.id ? '.brk-' + mod.id : '';
+                //console.log('[asset.css().Array.map()]', mod.path, prefix, prefix.length);
                 return p.render(mod.path, prefix);
             })
             .then(combine);

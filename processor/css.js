@@ -6,9 +6,11 @@ const debug = require('debug')('brick-asset:processor:css');
 
 var processor = {
     render: (path, rootClass) => {
+        //console.log(rootClass, rootClass.length);
         function compile(src) {
             return new BPromise((resolve, reject) => {
                 less.render(src, (e, output) => {
+                    //console.log('[processor/ss.render.compile()]', src, output, '\n');
                     return e ? reject(parseError(e)) : resolve(output.css);
                 });
             });
@@ -20,8 +22,9 @@ var processor = {
                 };
             }
         }
+        //console.log('[processor/css.render()]', rootClass, '\n');
         return fs.read(path)
-            .then(src => `${rootClass}{\n${src}\n}`)
+            .then(src => rootClass ? `${rootClass}{\n${src}\n}` : src)
             .then(compile);
     }
 };

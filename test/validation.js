@@ -8,15 +8,15 @@ describe('validation', function() {
     it('should validate css files', function() {
         valid.validateCSS('pkg/style.less').should.equal(true);
         valid.validateCSS('pkg/style.css').should.equal(true);
-        valid.validateCSS('pkg/style/foo.less').should.equal(true);
-        valid.validateCSS('pkg/style/foo/bar.css').should.equal(true);
+        valid.validateCSS('pkg/style/foo.less').should.equal(false);
         valid.validateCSS('pkg/style.llss').should.equal(false);
     });
 
     it('should validate css files for windows', function() {
-        valid.validateCSS('pkg\\style\\foo.less').should.equal(true);
-        valid.validateCSS('pkg\\style\\foo\\bar.css').should.equal(true);
-        valid.validateCSS('pkg\\style\\foo.llss').should.equal(false);
+        valid.validateCSS('pkg\\style.less').should.equal(true);
+        valid.validateCSS('pkg\\style\\index.css').should.equal(true);
+        valid.validateCSS('pkg\\style\\foo\\bar.css').should.equal(false);
+        valid.validateCSS('pkg\\style.llss').should.equal(false);
     });
 
     it('should validate js files', function() {
@@ -35,15 +35,11 @@ describe('validation', function() {
         valid.normalizeCSS('pkg/style.less').should.equal('pkg');
         valid.normalizeCSS('pkg/style.css').should.equal('pkg');
         valid.normalizeCSS('pkg/style/index.css').should.equal('pkg');
-        valid.normalizeCSS('pkg/style/foo.less').should.equal('pkg/foo');
-        valid.normalizeCSS('pkg/style/foo/bar.css').should.equal('pkg/foo/bar');
-        valid.normalizeCSS('pkg/style/foo/bar/index.css').should.equal('pkg/foo/bar');
     });
 
     it('should normalize css files for windows', function() {
-        valid.normalizeCSS('pkg\\style\\foo.less').should.equal('pkg/foo');
-        valid.normalizeCSS('pkg\\style\\foo\\bar\\car.css').should.equal('pkg/foo/bar/car');
-        valid.normalizeCSS('pkg\\style\\foo\\index.less').should.equal('pkg/foo');
+        valid.normalizeCSS('pkg\\style.less').should.equal('pkg');
+        valid.normalizeCSS('pkg\\style\\index.less').should.equal('pkg');
     });
 
     it('should normalize js files', function() {
@@ -57,7 +53,6 @@ describe('validation', function() {
     it('should normalize js files for windows', function() {
         valid.normalizeJS('pkg\\client\\foo.js').should.equal('pkg/foo');
         valid.normalizeJS('pkg\\client\\foo\\index.js').should.equal('pkg/foo');
-        valid.normalizeCSS('pkg\\style\\foo\\bar.css').should.equal('pkg/foo/bar');
     });
 
 });
